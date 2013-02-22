@@ -3,12 +3,15 @@ import com.nokia.meego 1.0
 import QtMobility.feedback 1.1
 
 Page {
-    // tools: commonTools
+    property variant entryModel
+
     id: mainPage
 
     Header {
         id: header
         title: "TogglMee"
+        anchors.top: parent.top
+        anchors.left: parent.left
     }
 
     HapticsEffect {
@@ -43,11 +46,11 @@ Page {
                 id: descCol
                 color: "#F5FAFF"
                 smooth: true
-                width: 2*parent.width/3
+                width: 5*parent.width/8
                 height: parent.height
                 anchors {
                     left: parent.left
-                    leftMargin: 10
+                    leftMargin: 2
                 }
                 Text {
                     id: timeEntryText
@@ -64,38 +67,45 @@ Page {
                 id: durationCol
                 color: "#F5FAFF"
                 smooth: true
-                width: parent.width/3
+                width: 2*parent.width/8
                 height: parent.height
-                anchors {
-                    left: descCol.right
-                    right: parent.right
-                    rightMargin: 10
-                }
+                anchors.left: descCol.right
                 Text {
                     id: timeDurationText
                     color: "darkgrey"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
                     text: duration
                     elide: Text.ElideRight
-                    font.pixelSize: 22
+                    font.pixelSize: 20
+                    font.family: "Arial"
                 }
             }
+            Rectangle {
+                id: continueCol
+                color: "#EAF4FE"
+                smooth: true
+                width: parent.width/8
+                height: parent.height
+                anchors.left: durationCol.right
+                ToolIcon {
+                    platformIconId: "toolbar-mediacontrol-play"
 
-            ToolIcon {
-                platformIconId: "toolbar-next"
-                anchors {
-                    right: parent.right
-                    rightMargin: -6
-                    verticalCenter: parent.verticalCenter
-                    verticalCenterOffset: -6
+                    anchors {
+                        right: parent.right
+                        rightMargin: -6
+                        verticalCenter: parent.verticalCenter
+                        verticalCenterOffset: -6
+                    }
                 }
             }
             MouseArea {
                 anchors.fill: descCol
                 onPressAndHold: {
                     rumbleEffect.start();
-                    queryDelete.model = timeentryModel
+                    queryDelete.model = entryModel
                     queryDelete.index = index
                     queryDelete.open();
                 }
@@ -105,7 +115,7 @@ Page {
             MouseArea {
                 anchors.fill: durationCol
                 onClicked: {
-                    timeentryModel.continueTimeEntry(index);
+                    entryModel.continueTimeEntry(index);
                 }
             }
         }
@@ -148,7 +158,7 @@ Page {
             TextArea {
                 id: taskText
                 width: 2*parent.width/3
-                placeholderText: timeentryModel.togglDescription
+                placeholderText: entryModel.togglDescription
                 anchors {
                     top: parent.top
                     left: parent.left
@@ -169,7 +179,7 @@ Page {
                     rightMargin: 20
                 }
                 readOnly: true
-                text: timeentryModel.togglDuration;
+                text: entryModel.togglDuration;
                 height: 50
             }
             Button {
@@ -184,9 +194,9 @@ Page {
                     topMargin: 5
                     bottomMargin: 5
                 }
-                text: timeentryModel.togglText;
+                text: entryModel.togglText;
                 font.pixelSize: 25
-                onClicked: timeentryModel.toggl(taskText.text);
+                onClicked: entryModel.toggl(taskText.text);
             }
         }
     }
@@ -201,7 +211,7 @@ Page {
             id: listview
             clip: true
             anchors.fill: parent
-            model: timeentryModel
+            model: entryModel
             delegate: mydelegate
             section.property: "date"
             section.criteria: ViewSection.FullString

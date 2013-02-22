@@ -31,6 +31,7 @@ signals:
     void togglTextChanged(const QString& text);
     void togglDurationChanged(const QString& text);
     void togglDescriptionChanged(const QString& text);
+    void togglTimeEntriesLoaded(bool isBusy);
     
 public slots:
     void setTimeEntries();
@@ -43,6 +44,7 @@ public slots:
 private:
     QList<Toggl::TogglTimeEntry*> m_timeentries;
     Toggl::TogglTimeEntry *m_current;
+    Toggl::TogglTimeEntry *m_continue;
     QMap<QDate, long> m_dailyDurations;
     TogglUI *m_toggl;
     QString m_togglText;

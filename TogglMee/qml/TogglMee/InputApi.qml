@@ -4,7 +4,7 @@ import com.nokia.meego 1.1
 import com.nokia.extras 1.1
 
 Page {
-    property bool uselogin: false
+    property bool uselogin: false    
 
     InfoBanner {
         id: infoBanner
@@ -91,6 +91,7 @@ Page {
     function loaded(jsonObject) {
         console.log(jsonObject.data.api_token);
         loader.setApiKey(jsonObject.data.api_token);
+        loader.setUserName(jsonObject.data.fullname);
     }
 }
 

@@ -8,6 +8,7 @@ TogglTimeEntryModel::TogglTimeEntryModel(TogglUI *toggl, QObject *parent) :
     QAbstractListModel(parent),
     m_timeentries(QList<Toggl::TogglTimeEntry*>()),
     m_current(NULL),
+    m_continue(NULL),
     m_toggl(toggl),
     m_togglText("Start"),
     m_togglDescription(default_description),
@@ -131,7 +132,11 @@ void TogglTimeEntryModel::currentSaved()
         int current = m_dailyDurations[d];
         m_dailyDurations[d] = current + entry->duration();
         endInsertRows();
-        m_current=NULL;
+        if(m_continue) {
+            m_continue->save();
+            m_current = m_continue;
+            m_continue = NULL;
+        }
     }
 }
 
@@ -154,6 +159,7 @@ void TogglTimeEntryModel::setTimeEntries()
         }
     }
     reset();
+    emit togglTimeEntriesLoaded(false);
 }
 
 void TogglTimeEntryModel::deleteTimeEntry(int index) {
@@ -177,26 +183,27 @@ void TogglTimeEntryModel::continueTimeEntry(int index) {
     Toggl::TogglTimeEntry *entry = m_timeentries[index];
     if(!entry)
         return;
-    Toggl::TogglTimeEntry *new_entry = new Toggl::TogglTimeEntry(m_toggl->togglConnector());
     QDateTime now = QDateTime::currentDateTimeUtc();
-    new_entry->setDescription(entry->description());
-    new_entry->setProject(entry->project());
-    new_entry->setBillable(entry->isBillable());
-    new_entry->setWorkspace(entry->workspace());
-    new_entry->setStart(now);
-    new_entry->setDuration(0-now.toTime_t());
-    connect(new_entry, SIGNAL(saved()), this, SLOT(currentSaved()));
+    m_continue = new Toggl::TogglTimeEntry(m_toggl->togglConnector());
+    m_continue->setDescription(entry->description());
+    m_continue->setProject(entry->project());
+    m_continue->setBillable(entry->isBillable());
+    m_continue->setWorkspace(entry->workspace());
+    m_continue->setStart(now);
+    m_continue->setDuration(0-now.toTime_t());
+    connect(m_continue, SIGNAL(saved()), this, SLOT(currentSaved()));
     if(m_current) {
-        m_current->setStop(now);
-        m_current->setDuration(m_current->startDateTime().secsTo(now));
+        m_current->setStop(now);        
+        m_current->setDuration(now.toTime_t()+m_current->duration());
         m_current->save();
+    } else {
+        m_current=m_continue;
+        m_continue=NULL;
     }
-    m_current=new_entry;
     setTogglText("Stop");
     setTogglDuration(seconds_to_timestamp(m_togglDuration=0));
-    emit togglDescriptionChanged(m_togglDescription=new_entry->description());
-    m_durationTimer->start(1000);
-    new_entry->save();
+    emit togglDescriptionChanged(m_togglDescription=entry->description());
+    m_durationTimer->start(1000);    
 }
 
 void TogglTimeEntryModel::toggl(const QVariant &description) {
@@ -215,10 +222,10 @@ void TogglTimeEntryModel::toggl(const QVariant &description) {
         m_current->setStop(now);
         m_durationTimer->stop();
         setTogglDuration(seconds_to_timestamp(m_togglDuration=0));
-        m_current->setDuration(m_current->startDateTime().secsTo(now));
+        m_current->setDuration(now.toTime_t()+m_current->duration());
         setTogglText("Start");
         emit togglDurationChanged(m_togglDescription=default_description);
     }
     m_current->setCreatedWith("TogglMee");
-    QTimer::singleShot(20, m_current, SLOT(save()));
+    m_current->save();
 }

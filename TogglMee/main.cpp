@@ -17,7 +17,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
     QDeclarativeContext *ctxt = viewer.rootContext();
     loader->setContext(ctxt);
-    ctxt->setContextProperty("loader", loader);    
+    ctxt->setContextProperty("loader", loader);
 
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/TogglMee/main.qml"));
