@@ -40,7 +40,9 @@ static QString seconds_to_timestamp(int duration)
     int hours = (int) (duration % 24);
     if(!minutes && !hours)
         return res.sprintf("%d sec", seconds);
-    return res.sprintf("%02d:%02d%s", hours?hours:minutes, hours?minutes:seconds, hours?"":" min");
+    if(!hours)
+        return res.sprintf("%02d:%02d min", minutes, seconds);
+    return res.sprintf("%02d:%02d:%02d", hours, minutes, seconds);
 }
 
 QVariant TogglTimeEntryModel::data(const QModelIndex &index, int role) const
@@ -143,19 +145,18 @@ void TogglTimeEntryModel::currentSaved()
 void TogglTimeEntryModel::setTimeEntries()
 {
     m_timeentries.clear();
+    m_dailyDurations.clear();
     for(int i=0; i<m_toggl->time_entry_list().size(); i++) {
         Toggl::TogglTimeEntry *entry = m_toggl->time_entry_list().at(i);
         if(entry->duration() > 0) {
-            m_timeentries.insert(i, entry);
+            m_timeentries.prepend(entry);
             QDate d = entry->startDateTime().date();
             int current = m_dailyDurations[d];
             m_dailyDurations[d] = current + entry->duration();
         } else {
             m_current = entry;
-            setTogglText("Stop");
-            setTogglDuration(seconds_to_timestamp(m_togglDuration = QDateTime::currentDateTimeUtc().toTime_t() + entry->duration()));
+            startTogglTimer(QDateTime::currentDateTimeUtc().toTime_t() + entry->duration());
             emit togglDescriptionChanged(m_togglDescription = entry->description());
-            m_durationTimer->start(1000);
         }
     }
     reset();
@@ -175,6 +176,13 @@ void TogglTimeEntryModel::deleteTimeEntry(int index) {
     m_dailyDurations[d] = current - entry->duration();
     m_toggl->togglConnector()->deleteTimeEntry(entry);
     endRemoveRows();
+}
+
+void TogglTimeEntryModel::startTogglTimer(int start_duration)
+{
+    setTogglText("Stop");
+    setTogglDuration(seconds_to_timestamp(m_togglDuration=start_duration));
+    m_durationTimer->start(1000);
 }
 
 void TogglTimeEntryModel::continueTimeEntry(int index) {
@@ -200,10 +208,8 @@ void TogglTimeEntryModel::continueTimeEntry(int index) {
         m_current=m_continue;
         m_continue=NULL;
     }
-    setTogglText("Stop");
-    setTogglDuration(seconds_to_timestamp(m_togglDuration=0));
+    startTogglTimer(0);
     emit togglDescriptionChanged(m_togglDescription=entry->description());
-    m_durationTimer->start(1000);    
 }
 
 void TogglTimeEntryModel::toggl(const QVariant &description) {
@@ -214,10 +220,8 @@ void TogglTimeEntryModel::toggl(const QVariant &description) {
         m_current->setStart(now);
         m_current->setDuration(0-now.toTime_t());
         m_current->setBillable(false);
-        setTogglText("Stop");
         connect(m_current, SIGNAL(saved()), this, SLOT(currentSaved()));
-        m_togglDuration=0;
-        m_durationTimer->start(1000);
+        startTogglTimer(0);
     } else {
         m_current->setStop(now);
         m_durationTimer->stop();

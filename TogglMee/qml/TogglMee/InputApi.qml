@@ -4,7 +4,7 @@ import com.nokia.meego 1.1
 import com.nokia.extras 1.1
 
 Page {
-    property bool uselogin: false    
+    property bool uselogin: true
 
     InfoBanner {
         id: infoBanner
@@ -46,7 +46,6 @@ Page {
             id: okButton
             text: "OK"
             onClicked: {
-                console.log("OK Clicked " + uselogin);
                 if(!uselogin)
                     loader.setApiKey(apiInput.text);
                 else
@@ -55,7 +54,7 @@ Page {
         }
         Button {
             id: toggleLogin
-            text: uselogin ? "API Key" : "Use passw"
+            text: uselogin ? "Input Key" : "Login"
             onClicked: {
                 uselogin = !uselogin
                 apiInput.placeholderText = uselogin ? "email" : "API Key"

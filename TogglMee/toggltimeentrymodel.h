@@ -26,6 +26,7 @@ public:
     void setTogglText(const QString &s);
     void setTogglDuration(const QString &s);
     void addTimeEntry(Toggl::TogglTimeEntry *t);
+    void startTogglTimer(int start_duration);
     
 signals:
     void togglTextChanged(const QString& text);

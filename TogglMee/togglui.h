@@ -17,7 +17,11 @@ class TogglUI : public QObject
 public:
     explicit TogglUI(QByteArray api_token, QObject *parent = 0);
     void init();
-    QList<Toggl::TogglTimeEntry*> time_entry_list();
+    QList<Toggl::TogglTimeEntry*> time_entry_list() const;
+    QList<Toggl::TogglClient*> client_list() const;
+    QList<Toggl::TogglProject*> project_list() const;
+    QList<Toggl::TogglTask*> task_list() const;
+    QList<Toggl::TogglWorkspace*> workspace_list() const;
     Toggl::TogglConnector *togglConnector() {return m_connector;}
     
 signals:
@@ -32,14 +36,12 @@ private slots:
 
 private:    
     Toggl::TogglConnector *m_connector;
-    Toggl::TogglClient m_toggl;
-    Toggl::TogglProject m_project;
-    Toggl::TogglTask m_task;
-    Toggl::TogglTimeEntry m_timeentry;
     Toggl::TogglUser m_user;
-    Toggl::TogglWorkspace m_workspace;
     QList<Toggl::TogglTimeEntry*> m_timeentries;
-    int m_loaded;
+    QList<Toggl::TogglClient*> m_clients;
+    QList<Toggl::TogglProject*> m_projects;
+    QList<Toggl::TogglTask*> m_tasks;
+    QList<Toggl::TogglWorkspace*> m_workspaces;
 };
 
 #endif // TOGGLUI_H

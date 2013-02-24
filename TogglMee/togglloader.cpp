@@ -64,6 +64,17 @@ void TogglLoader::setApiKey(const QString &key)
     }
 }
 
+void TogglLoader::trySetUsername()
+{
+    QMap<int, Toggl::TogglUser*> users = m_ui->togglConnector()->users();
+    if(users.isEmpty()) {
+        QTimer::singleShot(250, this, SLOT(trySetUsername()));
+    } else {
+        Toggl::TogglUser *u = users.values().first();
+        setUserName(u->fullName());
+    }
+}
+
 void TogglLoader::setContext(QDeclarativeContext *ctxt)
 {
     m_ctxt = ctxt;
@@ -83,4 +94,6 @@ void TogglLoader::setupTogglUi()
     setBusy(true);
     m_ui->init();
     emit apiKeyChanged(true);
+    if(m_username.isEmpty())
+        QTimer::singleShot(250, this, SLOT(trySetUsername()));
 }

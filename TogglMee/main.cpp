@@ -6,8 +6,6 @@
 #include "qmlapplicationviewer.h"
 #include "togglloader.h"
 
-// "9818003a0219957cb963096d8e5be213"
-
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QScopedPointer<QApplication> app(createApplication(argc, argv));
@@ -19,7 +17,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     loader->setContext(ctxt);
     ctxt->setContextProperty("loader", loader);
 
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockPortrait);
     viewer.setMainQmlFile(QLatin1String("qml/TogglMee/main.qml"));
     viewer.showExpanded();
 

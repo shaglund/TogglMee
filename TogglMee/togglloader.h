@@ -34,6 +34,9 @@ public slots:
     void setBusy(bool busy);
     void setUserName(const QString& name);
 
+private slots:
+    void trySetUsername();
+
 private:
     void setupTogglUi();
     QByteArray m_apiKey;
