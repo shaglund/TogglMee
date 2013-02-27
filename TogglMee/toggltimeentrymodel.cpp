@@ -45,6 +45,24 @@ static QString seconds_to_timestamp(int duration)
     return res.sprintf("%02d:%02d:%02d", hours, minutes, seconds);
 }
 
+static int timestamp_to_seconds(const QString& time)
+{
+    int i, duration, ret=0;
+    bool ok;
+    const int multipliers[3] = {3600, 60, 1};
+    QStringList parts = time.split(":");
+
+    if(parts.size() > 3) return 0;
+    int j=3-parts.size();
+    for(i=0; i<parts.size(); i++) {
+        duration = parts.at(i).toInt(&ok);
+        if(!ok || duration < 0) return ret;
+        duration *= multipliers[j++];
+        ret += duration;
+    }
+    return ret;
+}
+
 QVariant TogglTimeEntryModel::data(const QModelIndex &index, int role) const
 {
     if(index.row() < 0 || index.row() > m_timeentries.count())
@@ -53,7 +71,7 @@ QVariant TogglTimeEntryModel::data(const QModelIndex &index, int role) const
     QDateTime current = QDateTime::currentDateTimeUtc();
     QDateTime start;
     int duration, day, today = current.date().day();
-    int yesterday = current.addDays(-1).date().day();
+    int yesterday = current.addDays(-1).date().day();    
     QString res;
 
     Toggl::TogglTimeEntry* entry = m_timeentries[index.row()];
@@ -128,18 +146,20 @@ void TogglTimeEntryModel::currentSaved()
     if(m_current->duration() > 0) {
         Toggl::TogglTimeEntry *entry = m_current;
         m_current = NULL;
-        beginInsertRows(QModelIndex(), 0, 0);
+        beginResetModel();
         m_timeentries.insert(0, entry);
         QDate d = entry->startDateTime().date();
         int current = m_dailyDurations[d];
         m_dailyDurations[d] = current + entry->duration();
-        endInsertRows();
+        endResetModel();
         if(m_continue) {
             m_continue->save();
             m_current = m_continue;
             m_continue = NULL;
-        }
-    }
+        } else
+            emit togglIsBusy(false);
+    } else
+        emit togglIsBusy(false);
 }
 
 void TogglTimeEntryModel::setTimeEntries()
@@ -160,7 +180,7 @@ void TogglTimeEntryModel::setTimeEntries()
         }
     }
     reset();
-    emit togglTimeEntriesLoaded(false);
+    emit togglIsBusy(false);
 }
 
 void TogglTimeEntryModel::deleteTimeEntry(int index) {
@@ -204,9 +224,12 @@ void TogglTimeEntryModel::continueTimeEntry(int index) {
         m_current->setStop(now);        
         m_current->setDuration(now.toTime_t()+m_current->duration());
         m_current->save();
+        emit togglIsBusy(true);
     } else {
         m_current=m_continue;
         m_continue=NULL;
+        m_current->save();
+        emit togglIsBusy(true);
     }
     startTogglTimer(0);
     emit togglDescriptionChanged(m_togglDescription=entry->description());
@@ -232,4 +255,5 @@ void TogglTimeEntryModel::toggl(const QVariant &description) {
     }
     m_current->setCreatedWith("TogglMee");
     m_current->save();
+    emit togglIsBusy(true);
 }

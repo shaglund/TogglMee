@@ -109,11 +109,9 @@ Page {
                     queryDelete.index = index
                     queryDelete.open();
                 }
-                onClicked: {
-                }
             }
             MouseArea {
-                anchors.fill: durationCol
+                anchors.fill: continueCol
                 onClicked: {
                     entryModel.continueTimeEntry(index);
                 }

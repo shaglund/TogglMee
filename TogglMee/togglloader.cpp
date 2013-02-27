@@ -86,7 +86,7 @@ void TogglLoader::setupTogglUi()
 {
     m_ui = new TogglUI(m_apiKey);
     m_timeentrymodel = new TogglTimeEntryModel(m_ui);
-    connect(m_timeentrymodel, SIGNAL(togglTimeEntriesLoaded(bool)), this, SLOT(setBusy(bool)));
+    connect(m_timeentrymodel, SIGNAL(togglIsBusy(bool)), this, SLOT(setBusy(bool)));
     if(m_ctxt)
         m_ctxt->setContextProperty("timeentryModel", m_timeentrymodel);
     emit timeentryModelChanged(reinterpret_cast<QAbstractListModel*>(m_timeentrymodel));

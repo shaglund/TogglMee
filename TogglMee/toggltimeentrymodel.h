@@ -32,7 +32,7 @@ signals:
     void togglTextChanged(const QString& text);
     void togglDurationChanged(const QString& text);
     void togglDescriptionChanged(const QString& text);
-    void togglTimeEntriesLoaded(bool isBusy);
+    void togglIsBusy(bool isBusy);
     
 public slots:
     void setTimeEntries();
