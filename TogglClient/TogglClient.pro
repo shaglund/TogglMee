@@ -46,6 +46,10 @@ HEADERS +=\
     toggltask.h \
     toggluser.h
 
+contains(MEEGO_EDITION,harmattan) {
+    QMAKE_LFLAGS += -Wl,--rpath=/opt/TogglMee/lib
+}
+
 symbian {
     MMP_RULES += EXPORTUNFROZEN
     TARGET.UID3 = 0xE359E9C7
@@ -60,7 +64,7 @@ unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
     } else {
-        target.path = /usr/lib
+        target.path = /opt/TogglMee/lib
     }
     INSTALLS += target
 }

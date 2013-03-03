@@ -36,6 +36,10 @@ SOURCES += main.cpp \
     toggltimeentrymodel.cpp \
     togglloader.cpp
 
+contains(MEEGO_EDITION,harmattan) {
+    QMAKE_LFLAGS += -Wl,--rpath=/opt/TogglMee/lib
+}
+
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()

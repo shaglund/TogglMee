@@ -8,5 +8,9 @@ PageStackWindow {
     LoaderPage {
         id: loaderPage
     }
+
+    MesagePage {
+        id: messagePage
+    }
 }
 

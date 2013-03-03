@@ -72,6 +72,6 @@ symbian: {
 }
 
 contains(MEEGO_EDITION,harmattan) {
-    target.path = /opt/src/lib
+    target.path = /opt/TogglMee/lib
     INSTALLS += target
 }

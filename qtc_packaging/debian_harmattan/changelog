@@ -1,3 +1,19 @@
+togglmee (0.1.2) unstable; urgency=low
+  * Debugging why credentials are lost when running under launcher
+  in harmattan
+
+ -- unknown <sebastian@haglund.se>  Sat, 02 Mar 2013 13:31:22 +0100
+
+togglmee (0.1.0) unstable; urgency=low
+  * Add menu with log out option and busy-spinner to header. Minor tweaks
+  when saving timeentries.
+  * Use a page to load the other pages otherwise there's problem with
+  orientation on Harmattan.
+  * Fix update of model when adding new entry (on stop or continue).
+  * Start/stop busy-spinner correctly.
+
+ -- unknown <sebastian@haglund.se>  Wed, 27 Feb 2013 21:36:59 +0100
+
 togglmee (0.0.2) unstable; urgency=low
   * Rename subprojects
 

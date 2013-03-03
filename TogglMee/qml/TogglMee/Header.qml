@@ -91,7 +91,12 @@ Rectangle {
                 onClicked: loader.setApiKey("");
             }
             MenuItem {
-                text: "Refresh"
+                text: "Console"
+                onClicked: appWindow.pageStack.push(messagePage);
+            }
+            MenuItem {
+                text: "Back"
+                onClicked: appWindow.pageStack.pop();
             }
         }
     }

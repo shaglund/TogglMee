@@ -8,7 +8,7 @@ Homepage: <insert the upstream URL, if relevant>
 
 Package: togglmee
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libqjson0
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Toggl client for Harmattan
  <insert long description, indented with spaces>
 XSBC-Maemo-Display-Name: TogglMee
