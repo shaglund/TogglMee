@@ -22,6 +22,10 @@ Rectangle {
             leftMargin: 10
             topMargin: 5
         }
+        MouseArea {
+            anchors.fill: parent
+            onPressAndHold: appWindow.pageStack.push(messagePage);
+        }
     }
     Text {
         anchors {
@@ -89,14 +93,6 @@ Rectangle {
             MenuItem {
                 text: "Log out"
                 onClicked: loader.setApiKey("");
-            }
-            MenuItem {
-                text: "Console"
-                onClicked: appWindow.pageStack.push(messagePage);
-            }
-            MenuItem {
-                text: "Back"
-                onClicked: appWindow.pageStack.pop();
             }
         }
     }

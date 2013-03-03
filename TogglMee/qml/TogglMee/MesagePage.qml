@@ -3,11 +3,12 @@ import QtQuick 1.1
 import com.nokia.meego 1.0
 
 Page {
-    Header {
-        id: header
-        title: "Console"
-        anchors.top: parent.top
-        anchors.left: parent.left
+
+    tools: ToolBarLayout {
+        ToolIcon {
+            iconId: "toolbar-back"
+            onClicked: appWindow.pageStack.pop();
+        }
     }
 
     Component {
@@ -27,7 +28,7 @@ Page {
 
     Rectangle {
         width: parent.width
-        height: parent.height - header.height
+        height: parent.height
         anchors.top: header.bottom
         color: "#E8E8E8"
         ListView {
